@@ -1,0 +1,14 @@
+{
+  "name": "Recorderjs",
+  "homepage": "https://github.com/mattdiamond/Recorderjs",
+  "_release": "0a3bb87cc9",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "0a3bb87cc92d0980bbb21e9a22834283811d5e64"
+  },
+  "_source": "git://github.com/mattdiamond/Recorderjs.git",
+  "_target": "*",
+  "_originalSource": "Recorderjs",
+  "_direct": true
+}
