@@ -25,8 +25,14 @@ it provides echo cancellation and clear record.
     jsAudioRecorder.stopRecording('save');
 
     //Stop recording and download audio file
-    jsAudioRecorder.stopRecording('download');   
+    jsAudioRecorder.stopRecording('download');
+    
+    
+2) Live Demonstration
+---------------------
 
+    http://edouardkombo.github.io/jsHtml5AudioRecorder/demo/
+    
 
 Contributing
 -------------
