@@ -25,5 +25,5 @@ function stopRecording() {
     jsAudioRecorder.stopRecording('download');
     
     //No parameters will make your file to be downloader on your server
-    jsAudioRecorder.stopRecording();
+    //jsAudioRecorder.stopRecording();
 }
