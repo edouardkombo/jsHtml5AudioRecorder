@@ -31,7 +31,7 @@ it provides echo cancellation and clear record.
 2) Live Demonstration
 ---------------------
 
-    <a href='http://edouardkombo.github.io/jsHtml5AudioRecorder/demo/' target='_blank'>http://edouardkombo.github.io/jsHtml5AudioRecorder/demo/</a>
+http://edouardkombo.github.io/jsHtml5AudioRecorder/demo/
     
 
 Contributing
