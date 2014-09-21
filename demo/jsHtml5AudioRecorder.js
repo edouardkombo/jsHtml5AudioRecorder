@@ -1,40 +1,46 @@
 /**
- * Object: jsHtml5AudioRecorder
- * Version: 0.0.0
- * Author: Edouard Kombo
+ * Object:  jsHtml5AudioRecorder
+ * Version: master
+ * Author:  Edouard Kombo
  * Twitter: @EdouardKombo
- * Github: Edouard Kombo
- * Url: https://github.com/edouardkombo/jsHtml5AudioRecorder
+ * Github:  https://github.com/edouardkombo
+ * Blog:    http://creativcoders.wordpress.com
+ * Url:     https://github.com/edouardkombo/jsHtml5AudioRecorder
  * 
  * Dual licensed under the MIT and GPL licenses:
  * http://www.opensource.org/licenses/mit-license.php
  * http://www.gnu.org/licenses/gpl.html
  * 
- * Record live audio stream in html5, save to server or direct download
+ * Record live audio stream in html5 with echo cancellation, save it on server or download directly from browser
  */
 
 var jsHtml5AudioRecorder = function(){};
 
 jsHtml5AudioRecorder.prototype = {
     audioContext: '',
-    microphone: '',  
-    recIndex: 0,
     Recorder: false,
     mediaPath: '',
     phpFile: '',
     fftSize: 2048,
     
+    /**
+     * Get Proper html5 getUsermedia from window.navigator object, depending on the browser
+     * 
+     * @returns {undefined}
+     */
     initAudio: function (){
-        if (!navigator.getUserMedia)
+        if (!navigator.getUserMedia) {
             navigator.getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-        if (!navigator.cancelAnimationFrame)
-            navigator.cancelAnimationFrame = navigator.webkitCancelAnimationFrame || navigator.mozCancelAnimationFrame;
-        if (!navigator.requestAnimationFrame)
-            navigator.requestAnimationFrame = navigator.webkitRequestAnimationFrame || navigator.mozRequestAnimationFrame;
-
-        window.onload       = this.onLoad();
+        }
+ 
+        window.onload = this.onLoad();
     },
     
+    /**
+     * Create audio context and live stream, and pass it to getUserMedia html5 api
+     * 
+     * @returns {undefined}
+     */
     onLoad: function () {
         try {
             this.audioContext    = new AudioContext();
@@ -50,29 +56,56 @@ jsHtml5AudioRecorder.prototype = {
         });        
     },
 
+    /**
+     * Create live audio stream with echo cancellation
+     * 
+     * @param {Object} stream
+     * @returns {undefined}
+     */
     startStream: function(stream) {
-        this.inputPoint         = this.audioContext.createGain();
+        
+        //Create virtual input from empty amplification factor object
+        var virtualInput        = this.audioContext.createGain();
+       
+        //Assign stream source to html5 audio context object
+        var microphone         = this.audioContext.createMediaStreamSource(stream);
+        
+        //Connect media source output to virtualInput input
+        //So, virtualInput now equals microphone input
+        microphone.connect(virtualInput);
 
-        this.microphone         = this.audioContext.createMediaStreamSource(stream);
-        this.microphone.connect(this.inputPoint);
-
+        //Set audio quality and assign it to virtualInput
         var analyserNode        = this.audioContext.createAnalyser();
         analyserNode.fftSize    = this.fftSize;
-        this.inputPoint.connect( analyserNode );
+        virtualInput.connect( analyserNode );
 
-        this.Recorder           = new Recorder( this.inputPoint );
+        //Record audio input
+        this.Recorder           = new Recorder( microphone );
 
-        var zeroGain            = this.audioContext.createGain();
-        zeroGain.gain.value     = 0.0;
-        this.inputPoint.connect( zeroGain );
-        zeroGain.connect( this.audioContext.destination );        
+        //Set volume to zero
+        var amplificationFactor = this.audioContext.createGain();
+        amplificationFactor.gain.value     = 0.0;
+        
+        //We set volume to zero to output, so we cancel echo
+        amplificationFactor.connect( this.audioContext.destination );        
     },
     
+    /**
+     * Start audio record
+     * 
+     * @returns {undefined}
+     */
     startRecording: function() {
         this.Recorder && this.Recorder.record();        
         console.log('Recording audio...');
     },
     
+    /**
+     * Stop audio record and choose export method (save or download)
+     * 
+     * @param {String} method
+     * @returns {undefined}
+     */
     stopRecording: function(method) {
         this.Recorder && this.Recorder.stop();
 
@@ -93,12 +126,16 @@ jsHtml5AudioRecorder.prototype = {
         console.log('Stop Recording audio!');        
     },
 
+    /**
+     * Save audio file to server
+     * 
+     * @param {Object} blob
+     * @returns {undefined}
+     */
     save: function (blob) {
         
         var datas       = 'path='+this.mediaPath+'&format=.wav';                  
 
-        //Because with classic ajax requests we are unable to send huge files
-        //We use original XMLHttpRequest object
         var client = new XMLHttpRequest();
         client.onreadystatechange = function() 
         {
@@ -118,16 +155,19 @@ jsHtml5AudioRecorder.prototype = {
         client.send(blob);
     },   
 
+    /**
+     * Directly download audio file from the browser
+     * 
+     * @param {Object} blob
+     * @returns {undefined}
+     */
     download: function(blob) {
         
         var url             = window.URL.createObjectURL(blob);
-        var au              = document.createElement('audio');
         var hf              = document.createElement('a');
 
         var temporaryId     = new Date().toISOString();
 
-        au.controls         = true;
-        au.src              = url;
         hf.href             = url;
         hf.id               = temporaryId;
         hf.download         = temporaryId + '.wav';

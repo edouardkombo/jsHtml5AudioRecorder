@@ -1,11 +1,11 @@
 {
   "name": "jsHtml5AudioRecorder",
   "main": "jsHtml5AudioRecorder.js",
-  "version": "0.0.0",
+  "version": "master",
   "authors": [
     "Edouard Kombo <edouard.kombo@gmail.com>"
   ],
-  "description": "Record live audio stream in html5, save ot server or download directly from browser",
+  "description": "Record live audio stream in html5 with echo cancellation, save it on server or download directly from browser",
   "keywords": [
     "html5",
     "audio",
