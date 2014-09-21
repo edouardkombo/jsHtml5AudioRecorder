@@ -22,14 +22,14 @@ It works perfectly on Google Chrome, Firefox and Opera.
     jsAudioRecorder.initAudio();
 
     //Set Parameters
-    jsAudioRecorder.Recorder    = Recorder;
+    jsAudioRecorder.Recorder    = Recorder; //From Recorder.js
     jsAudioRecorder.mediaPath   = "PATH_TO_MEDIA_DIRECTORY";
     jsAudioRecorder.phpFile     = "PHP_FILE_TO_TARGET";
 
     //Start recording
     jsAudioRecorder.startRecording();
 
-    //Stop recording and save audio file into Directory
+    //Stop recording and save audio file on your server
     jsAudioRecorder.stopRecording('save');
 
     //Stop recording and download audio file

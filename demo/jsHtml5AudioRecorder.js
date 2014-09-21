@@ -33,7 +33,17 @@ jsHtml5AudioRecorder.prototype = {
             navigator.getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
         }
  
+        try {
+            this.audioContext    = new AudioContext();
+            console.log('Audio context set up.');
+            console.log('navigator.getUserMedia ' + (navigator.getUserMedia ? 'available.' : 'not present!'));
+            
+        } catch (e) {
+            alert('No web audio support in this browser!');
+        }
+        
         window.onload = this.onLoad();
+        
     },
     
     /**
@@ -42,14 +52,6 @@ jsHtml5AudioRecorder.prototype = {
      * @returns {undefined}
      */
     onLoad: function () {
-        try {
-            this.audioContext    = new AudioContext();
-            console.log('Audio context set up.');
-            console.log('navigator.getUserMedia ' + (navigator.getUserMedia ? 'available.' : 'not present!'));
-        } catch (e) {
-            alert('No web audio support in this browser!');
-        }        
-        
         navigator.getUserMedia({audio:true}, this.startStream.bind(this), function(e) {
             alert('No audio stream!');
             console.log(e);
@@ -79,8 +81,8 @@ jsHtml5AudioRecorder.prototype = {
         analyserNode.fftSize    = this.fftSize;
         virtualInput.connect( analyserNode );
 
-        //Record audio input
-        this.Recorder           = new Recorder( microphone );
+        //Set the stream to RecorderJs from Matt Diamond
+        this.Recorder           = new Recorder( virtualInput );
 
         //Set volume to zero
         var amplificationFactor = this.audioContext.createGain();
@@ -164,18 +166,22 @@ jsHtml5AudioRecorder.prototype = {
     download: function(blob) {
         
         var url             = window.URL.createObjectURL(blob);
+        //Create a link
         var hf              = document.createElement('a');
 
         var temporaryId     = new Date().toISOString();
-
+        
+        //Define link attributes
         hf.href             = url;
         hf.id               = temporaryId;
         hf.download         = temporaryId + '.wav';
         hf.innerHTML        = hf.download;
         hf.style.display    = 'none';
         hf.style.visibility = 'hidden';
+        //Append the link inside html code
         document.body.appendChild(hf);
 
+        //Simulate click on link to download file, and instantly delete link
         document.getElementById(hf.id).click();
         document.getElementById(hf.id).remove();
     }

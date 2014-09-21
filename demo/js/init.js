@@ -3,7 +3,7 @@
 ***************************************************/
 if((window.chrome !== null) && (window.navigator.vendor === "Google Inc.")) {
 } else { 
-   alert('This application will only work on Google Chrome!');
+   alert('This application will only work on Google Chrome, Firefox and Opera!');
 }
 
 var jsAudioRecorder = new jsHtml5AudioRecorder();
