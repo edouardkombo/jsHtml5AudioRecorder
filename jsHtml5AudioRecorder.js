@@ -1,6 +1,6 @@
 /**
  * Object: jsHtml5AudioRecorder
- * Version: 0.0.0
+ * Version: master
  * Author: Edouard Kombo
  * Twitter: @EdouardKombo
  * Github: Edouard Kombo
