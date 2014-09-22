@@ -232,6 +232,5 @@ jsHtml5AudioRecorder.prototype = {
         audio.setAttribute('autoplay', false);         
         audio.setAttribute('controls', true);
         audio.pause();
-        
     }    
 };

@@ -99,6 +99,13 @@ jsHtml5AudioRecorder.prototype = {
      * @returns {undefined}
      */
     startRecording: function() {
+        
+        //Delete audio element if already exists to avoid element duplication and cache
+        var audioElement = document.getElementById(this.audioTagId);
+        if (audioElement) {
+            audioElement.remove();
+        }
+        
         this.Recorder && this.Recorder.record();        
         console.log('Recording audio...');
     },
@@ -219,10 +226,11 @@ jsHtml5AudioRecorder.prototype = {
         audio.src               = url;
         audio.id                = this.audioTagId;
         audio.style.display     = 'visible';
-        audio.style.visibility  = 'block';        
+        audio.style.visibility  = 'block'; 
+        document.body.appendChild(audio);
+        
         audio.setAttribute('autoplay', false);         
         audio.setAttribute('controls', true);
         audio.pause();
-        
     }    
 };
