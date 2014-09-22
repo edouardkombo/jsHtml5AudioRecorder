@@ -11,10 +11,12 @@ var jsAudioRecorder = new jsHtml5AudioRecorder();
 /***************************************************
 	Init Html5 Audio Streaming
 ***************************************************/
-jsAudioRecorder.initAudio();
 jsAudioRecorder.Recorder    = Recorder;
 jsAudioRecorder.mediaPath   = '/medias/Temp/';
 jsAudioRecorder.phpFile     = '/form/Process.php'; //Create your own file or ask me for it (edouard.kombo@gmail.com)
+jsAudioRecorder.audioTagId  = 'myAudio';
+
+jsAudioRecorder.init();
 
 
 function startRecording() {
@@ -22,7 +24,7 @@ function startRecording() {
 }
 
 function stopRecording() {
-    jsAudioRecorder.stopRecording('download');
+    jsAudioRecorder.stopRecording('downloadAndStream');
     
     //No parameters will make your file to be downloader on your server
     //jsAudioRecorder.stopRecording();

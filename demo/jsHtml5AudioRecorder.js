@@ -22,13 +22,14 @@ jsHtml5AudioRecorder.prototype = {
     mediaPath: '',
     phpFile: '',
     fftSize: 2048,
+    audioTagId: 'audio',
     
     /**
      * Get Proper html5 getUsermedia from window.navigator object, depending on the browser
      * 
      * @returns {undefined}
      */
-    initAudio: function (){
+    init: function (){
         if (!navigator.getUserMedia) {
             navigator.getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
         }
@@ -98,6 +99,13 @@ jsHtml5AudioRecorder.prototype = {
      * @returns {undefined}
      */
     startRecording: function() {
+        
+        //Delete audio element if already exists to avoid element duplication and cache
+        var audioElement = document.getElementById(this.audioTagId);
+        if (audioElement) {
+            audioElement.remove();
+        }
+        
         this.Recorder && this.Recorder.record();        
         console.log('Recording audio...');
     },
@@ -115,11 +123,17 @@ jsHtml5AudioRecorder.prototype = {
             console.log(blob);
             
             if (method === 'save') {
-                this.save(blob);
+                this.save(blob, false);
             } else if (method === 'download') {
-                this.download(blob);
+                this.downmload(blob, false);
+            } else if (method === 'stream') {
+                this.stream(blob);
+            } else if (method === 'saveAndStream') {
+                this.save(blob, true);
+            } else if (method === 'downloadAndStream') {
+                this.download(blob, true);
             } else {
-                this.save(blob);                
+                this.save(blob, false);
             }
             
         }.bind(this));
@@ -132,9 +146,10 @@ jsHtml5AudioRecorder.prototype = {
      * Save audio file to server
      * 
      * @param {Object} blob
+     * @param {String} stream
      * @returns {undefined}
      */
-    save: function (blob) {
+    save: function (blob, stream) {
         
         var datas       = 'path='+this.mediaPath+'&format=.wav';                  
 
@@ -143,7 +158,10 @@ jsHtml5AudioRecorder.prototype = {
         {
             if (client.readyState === 4 && client.status === 200) 
             {
-                console.log(client.response);                        
+                console.log(client.response);
+                if (stream) {
+                    this.stream(blob);
+                }                
             }
         }.bind(this);
         client.open("post", this.phpFile+'?'+datas, true);
@@ -158,12 +176,13 @@ jsHtml5AudioRecorder.prototype = {
     },   
 
     /**
-     * Directly download audio file from the browser
+     * Directly download audio file from the browser and stream it if specified
      * 
      * @param {Object} blob
+     * @param {String} stream
      * @returns {undefined}
      */
-    download: function(blob) {
+    download: function(blob, stream) {
         
         var url             = window.URL.createObjectURL(blob);
         //Create a link
@@ -184,5 +203,35 @@ jsHtml5AudioRecorder.prototype = {
         //Simulate click on link to download file, and instantly delete link
         document.getElementById(hf.id).click();
         document.getElementById(hf.id).remove();
-    }
+        
+        if (stream) {
+            this.stream(blob);
+        }        
+    },
+    
+    /**
+     * Stream
+     * 
+     * @param {Object} blob
+     * @returns {undefined}
+     */
+    stream: function(blob) {
+        
+        var url             = window.URL.createObjectURL(blob);
+        
+        //Create audio tag
+        var audio           = document.createElement('audio');
+        
+        //Define audio tag attributes
+        audio.src               = url;
+        audio.id                = this.audioTagId;
+        audio.style.display     = 'visible';
+        audio.style.visibility  = 'block'; 
+        document.body.appendChild(audio);
+        
+        audio.setAttribute('autoplay', false);         
+        audio.setAttribute('controls', true);
+        audio.pause();
+        
+    }    
 };

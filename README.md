@@ -15,25 +15,28 @@ It works perfectly on Google Chrome, Firefox and Opera.
 2) How to use it?
 -----------------
 
-    //Create the object
-    var jsAudioRecorder = new jsHtml5AudioRecorder();
-    
-    //Initialize it
-    jsAudioRecorder.initAudio();
+    //Instantiate the object
+    var jsAudioRecorder         = new jsHtml5AudioRecorder();
 
     //Set Parameters
-    jsAudioRecorder.Recorder    = Recorder; //From Recorder.js
+    jsAudioRecorder.Recorder    = Recorder; //From Matt Diamond Recorder.js
     jsAudioRecorder.mediaPath   = "PATH_TO_MEDIA_DIRECTORY";
     jsAudioRecorder.phpFile     = "PHP_FILE_TO_TARGET";
+    jsAudioRecorder.audioTagId  = "myAudio";
+
+    //Initialize it
+    jsAudioRecorder.init();
 
     //Start recording
     jsAudioRecorder.startRecording();
 
-    //Stop recording and save audio file on your server
-    jsAudioRecorder.stopRecording('save');
-
-    //Stop recording and download audio file
-    jsAudioRecorder.stopRecording('download');
+    //Stop recording with options
+    jsAudioRecorder.stopRecording(); //Save audio on your server
+    jsAudioRecorder.stopRecording('save'); //Save audio on your server
+    jsAudioRecorder.stopRecording('download'); //Download audio from browser
+    jsAudioRecorder.stopRecording('stream'); //Directly stream audio from browser
+    jsAudioRecorder.stopRecording('saveAndStream'); //Save audio on server and stream it
+    jsAudioRecorder.stopRecording('downloadAndStream'); //Download audio from browser and stream it
 
         
 3) Live Demonstration
