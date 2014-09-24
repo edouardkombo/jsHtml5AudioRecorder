@@ -20,9 +20,12 @@ jsHtml5AudioRecorder.prototype = {
     audioContext: '',
     Recorder: false,
     mediaPath: '',
+    audioExtension: '',
+    audioLink: '',    
     phpFile: '',
     fftSize: 2048,
     audioTagId: 'audio',
+    showStreamOnFinish: false,
     
     /**
      * Get Proper html5 getUsermedia from window.navigator object, depending on the browser
@@ -91,7 +94,7 @@ jsHtml5AudioRecorder.prototype = {
         
         //We set volume to zero to output, so we cancel echo
         amplificationFactor.connect( this.audioContext.destination );        
-    },
+    },   
     
     /**
      * Start audio record
@@ -124,14 +127,23 @@ jsHtml5AudioRecorder.prototype = {
             
             if (method === 'save') {
                 this.save(blob, false);
+
             } else if (method === 'download') {
-                this.downmload(blob, false);
+                this.download(blob, false);
+
             } else if (method === 'stream') {
                 this.stream(blob);
+
+            } else if (method === 'saveAndDownload') {
+                this.save(blob, false);
+                this.download(blob, false);
+
             } else if (method === 'saveAndStream') {
                 this.save(blob, true);
+
             } else if (method === 'downloadAndStream') {
                 this.download(blob, true);
+
             } else {
                 this.save(blob, false);
             }
@@ -151,7 +163,7 @@ jsHtml5AudioRecorder.prototype = {
      */
     save: function (blob, stream) {
         
-        var datas       = 'path='+this.mediaPath+'&format=.wav';                  
+        var datas       = 'path='+this.mediaPath+'&extension='+this.audioExtension;                  
 
         var client = new XMLHttpRequest();
         client.onreadystatechange = function() 
@@ -159,6 +171,10 @@ jsHtml5AudioRecorder.prototype = {
             if (client.readyState === 4 && client.status === 200) 
             {
                 console.log(client.response);
+                
+                //Get audio file link
+                this.audioLink = client.response;
+                
                 if (stream) {
                     this.stream(blob);
                 }                
@@ -193,7 +209,7 @@ jsHtml5AudioRecorder.prototype = {
         //Define link attributes
         hf.href             = url;
         hf.id               = temporaryId;
-        hf.download         = temporaryId + '.wav';
+        hf.download         = temporaryId + '.' + this.audioExtension;
         hf.innerHTML        = hf.download;
         hf.style.display    = 'none';
         hf.style.visibility = 'hidden';
@@ -225,8 +241,15 @@ jsHtml5AudioRecorder.prototype = {
         //Define audio tag attributes
         audio.src               = url;
         audio.id                = this.audioTagId;
-        audio.style.display     = 'visible';
-        audio.style.visibility  = 'block'; 
+        
+        if (this.showStreamOnFinish) {
+            audio.style.display     = 'block';
+            audio.style.visibility  = 'visible';            
+        } else {
+            audio.style.display     = 'none';
+            audio.style.visibility  = 'hidden';            
+        }        
+         
         document.body.appendChild(audio);
         
         audio.setAttribute('autoplay', false);         

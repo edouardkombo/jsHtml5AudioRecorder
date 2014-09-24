@@ -11,10 +11,14 @@ var jsAudioRecorder = new jsHtml5AudioRecorder();
 /***************************************************
 	Init Html5 Audio Streaming
 ***************************************************/
-jsAudioRecorder.Recorder    = Recorder;
-jsAudioRecorder.mediaPath   = '/medias/Temp/';
-jsAudioRecorder.phpFile     = '/form/Process.php'; //Create your own file or ask me for it (edouard.kombo@gmail.com)
-jsAudioRecorder.audioTagId  = 'myAudio';
+jsAudioRecorder.Recorder            = Recorder;         //External library that effectively record audio stream
+
+jsAudioRecorder.mediaPath           = '/medias/Temp/';  //Path where to store audio files
+jsAudioRecorder.audioExtension      = 'wav';            //Only wav format is supported
+jsAudioRecorder.audioTagId          = 'myAudio';
+jsAudioRecorder.showStreamOnFinish  = false;            //Show audio player on finish?
+
+jsAudioRecorder.phpFile             = '/form/audioProcess.php'; //Php file that will proceed to audio file 
 
 jsAudioRecorder.init();
 
@@ -23,9 +27,13 @@ function startRecording() {
     jsAudioRecorder.startRecording();
 }
 
+/**
+ * You can use "save", "saveAndDownload" or "saveAndStream", "downloadAndStream" parameters
+ */
 function stopRecording() {
+    //For demo
     jsAudioRecorder.stopRecording('downloadAndStream');
     
-    //No parameters will make your file to be downloader on your server
-    //jsAudioRecorder.stopRecording();
+    //In production
+    //jsAudioRecorder.stopRecording('saveAndStream');
 }
